@@ -10,3 +10,4 @@ target_link_libraries(WPELauncher
 )
 
 install(TARGETS WPELauncher DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+install(PROGRAMS wpe DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
