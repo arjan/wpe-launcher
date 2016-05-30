@@ -23,22 +23,7 @@ WKPageNavigationClientV0 s_navigationClient = {
     nullptr, // didFinishNavigation
     nullptr, // didFailNavigation
     nullptr, // didFailProvisionalLoadInSubframe
-    // didFinishDocumentLoad
-    [](WKPageRef page, WKNavigationRef, WKTypeRef, const void*) {
-        WKStringRef messageName = WKStringCreateWithUTF8CString("Hello");
-        WKMutableArrayRef messageBody = WKMutableArrayCreate();
-
-        for (auto& item : { "Test1", "Test2", "Test3" }) {
-            WKStringRef itemString = WKStringCreateWithUTF8CString(item);
-            WKArrayAppendItem(messageBody, itemString);
-            WKRelease(itemString);
-        }
-
-        fprintf(stderr, "[WPELauncher] Hello InjectedBundle ...\n");
-        WKPagePostMessageToInjectedBundle(page, messageName, messageBody);
-        WKRelease(messageBody);
-        WKRelease(messageName);
-    },
+    nullptr, // didFinishDocumentLoad
     nullptr, // didSameDocumentNavigation
     nullptr, // renderingProgressDidChange
     nullptr, // canAuthenticateAgainstProtectionSpace
@@ -74,8 +59,6 @@ int main(int argc, char* argv[])
     GMainLoop* loop = g_main_loop_new(nullptr, FALSE);
 
     auto contextConfiguration = WKContextConfigurationCreate();
-    auto injectedBundlePath = WKStringCreateWithUTF8CString("/usr/lib/libWPEInjectedBundle.so");
-    WKContextConfigurationSetInjectedBundlePath(contextConfiguration, injectedBundlePath);
 
     gchar *wpeStoragePath = g_build_filename(g_get_user_cache_dir(), "wpe", "local-storage", nullptr);
     g_mkdir_with_parents(wpeStoragePath, 0700);
@@ -88,8 +71,6 @@ int main(int argc, char* argv[])
     auto diskCacheDirectory = WKStringCreateWithUTF8CString(wpeDiskCachePath);
     g_free(wpeDiskCachePath);
     WKContextConfigurationSetDiskCacheDirectory(contextConfiguration, diskCacheDirectory);
-
-    WKRelease(injectedBundlePath);
 
     WKContextRef context = WKContextCreateWithConfiguration(contextConfiguration);
     WKRelease(contextConfiguration);
